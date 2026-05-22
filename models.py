@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Float, LargeBinary
 from sqlalchemy.orm import relationship
 from database import Base
 
-
 # ============================================================
 # USER
 # ============================================================
@@ -169,7 +168,7 @@ class DigitalAsset(Base):
 
     asset_type = Column(String)
     identifier = Column(String)
-    metadata = Column(String)
+    asset_metadata = Column(String)
     estimated_value = Column(Integer)
 
     user = relationship("User", back_populates="digital_assets")
