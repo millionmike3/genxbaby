@@ -208,6 +208,44 @@ def proof_of_funds(user_id: int, request: Request, db: Session = Depends(get_db)
 
     if not vault:
         raise HTTPException(status_code=400, detail="Vault not initialized")
+@app.post("/brand-profiles", response_model=BrandProfileOut)
+def create_brand(profile: BrandProfileCreate, db: Session = Depends(get_db)):
+    brand = BrandProfile(**profile.dict())
+    db.add(brand)
+    db.commit()
+    db.refresh(brand)
+    return brand
+
+@app.get("/brand-profiles", response_model=list[BrandProfileOut])
+def list_brands(db: Session = Depends(get_db)):
+    return db.query(BrandProfile).all()
+
+@app.get("/brand-profiles/{brand_id}", response_model=BrandProfileOut)
+def get_brand(brand_id: int, db: Session = Depends(get_db)):
+    brand = db.query(BrandProfile).filter(BrandProfile.id == brand_id).first()
+    if not brand:
+        raise HTTPException(404, "Brand not found")
+    return brand
+
+@app.put("/brand-profiles/{brand_id}", response_model=BrandProfileOut)
+def update_brand(brand_id: int, profile: BrandProfileCreate, db: Session = Depends(get_db)):
+    brand = db.query(BrandProfile).filter(BrandProfile.id == brand_id).first()
+    if not brand:
+        raise HTTPException(404, "Brand not found")
+    for key, value in profile.dict().items():
+        setattr(brand, key, value)
+    db.commit()
+    db.refresh(brand)
+    return brand
+
+@app.delete("/brand-profiles/{brand_id}")
+def delete_brand(brand_id: int, db: Session = Depends(get_db)):
+    brand = db.query(BrandProfile).filter(BrandProfile.id == brand_id).first()
+    if not brand:
+        raise HTTPException(404, "Brand not found")
+    db.delete(brand)
+    db.commit()
+    return {"message": "Brand deleted"}
 
     capacity = (
         (vault.cash_balance or 0)
