@@ -198,3 +198,28 @@ class DigitalAssetOut(BaseModel):
 
     class Config:
         from_attributes = True
+from pydantic import BaseModel
+
+class BrandProfileBase(BaseModel):
+    domain: str
+    bank_name: str
+    legal_name: str
+    logo_url: str | None = None
+    primary_color: str | None = None
+    secondary_color: str | None = None
+    contact_email: str | None = None
+    contact_phone: str | None = None
+    address: str | None = None
+    support_hours: str | None = None
+    pof_header_text: str | None = None
+    mortgage_header_text: str | None = None
+    check_template: str | None = None
+
+class BrandProfileCreate(BrandProfileBase):
+    pass
+
+class BrandProfileOut(BrandProfileBase):
+    id: int
+
+    class Config:
+        orm_mode = True
